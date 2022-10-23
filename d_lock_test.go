@@ -21,7 +21,7 @@ func Test_getLock(t *testing.T) {
 		panic(err)
 	}
 	defer conn.Close()
-	lock, err := GetLock(conn, "/nie/john/hi/hello")
+	lock, err := GetBlockLock(conn, "/nie/john/hi/hello")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func do(i int) {
 		panic(err)
 	}
 	defer conn.Close()
-	lock, err := GetLock(conn, "/dlock")
+	lock, err := GetBlockLock(conn, "/dlock")
 	if err != nil {
 		fmt.Printf("node:%d get lock err:%s", i, err)
 	}

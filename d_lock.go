@@ -148,3 +148,23 @@ func getPathSeq(path string) int {
 	}
 	return int(n)
 }
+
+func createParentPath(conn *zk.Conn, path string) error {
+	parts := strings.Split(path, "/")
+	pPath := ""
+	for _, v := range parts[1:] {
+		pPath += "/" + v
+		isExist, _, err := conn.Exists(pPath)
+		if err != nil {
+			return err
+		}
+		if isExist {
+			continue
+		}
+		_, err = conn.Create(pPath, nil, 0, zk.WorldACL(zk.PermAll))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
