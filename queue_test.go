@@ -1,4 +1,4 @@
-package main
+package zk_utils
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNewQueue(t *testing.T) {
+func TestProduce(t *testing.T) {
 	conn, _, err := zk.Connect([]string{"127.0.0.1:2181", "127.0.0.1:2182", "127.0.0.1:2183"}, time.Second*15)
 	if err != nil {
 		panic(err)
@@ -18,11 +18,22 @@ func TestNewQueue(t *testing.T) {
 		t.Fatal(err)
 		return
 	}
-	go func() {
-		for i := 0; i < 100; i++ {
-			queue.Producer(fmt.Sprintf("test_%d", i))
-		}
-	}()
+	for i := 0; i < 100; i++ {
+		queue.Producer(fmt.Sprintf("test_%d", i))
+	}
+}
+
+func TestConsumer(t *testing.T) {
+	conn, _, err := zk.Connect([]string{"127.0.0.1:2181", "127.0.0.1:2182", "127.0.0.1:2183"}, time.Second*15)
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+	queue, err := NewQueue(conn, "/test/queue")
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
 
 	go func() {
 		for {

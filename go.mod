@@ -1,4 +1,4 @@
-module github.com/john35/zk_service_found
+module github.com/john35/zk_utils
 
 go 1.17
 

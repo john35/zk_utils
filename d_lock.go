@@ -1,4 +1,4 @@
-package main
+package zk_utils
 
 import (
 	"errors"
@@ -112,22 +112,7 @@ func createEphemeralPath(conn *zk.Conn, lockPath string) (string, error) {
 	for i := 0; i < 3; i++ {
 		path, err = conn.CreateProtectedEphemeralSequential(prefix, []byte("my lock"), zk.WorldACL(zk.PermAll))
 		if err == zk.ErrNoNode {
-			parts := strings.Split(lockPath, "/")
-			pPath := ""
-			for _, v := range parts[1:] {
-				pPath += "/" + v
-				isExist, _, err := conn.Exists(pPath)
-				if err != nil {
-					return "", err
-				}
-				if isExist {
-					continue
-				}
-				_, err = conn.Create(pPath, nil, 0, zk.WorldACL(zk.PermAll))
-				if err != nil {
-					return "", err
-				}
-			}
+			err = createParentPath(conn, lockPath)
 		}
 		if err == nil {
 			return path, nil

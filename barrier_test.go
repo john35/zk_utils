@@ -1,4 +1,4 @@
-package main
+package zk_utils
 
 import (
 	"fmt"
